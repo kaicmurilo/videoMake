@@ -1,0 +1,28 @@
+import requests
+
+url = "https://api.creatomate.com/v1/renders"
+api_key = "8e3d0388c913473a95cd4bdd2e4513ab49673e6b952a19ab446e1942705652ef19a8e2029e3cdaaea801c34c46e31b5f"
+
+data = {
+  "template_id": "316f8ed1-68a3-42f2-970d-00837082a1fa",
+  "modifications": {
+    "Main-Image.source": "https://creatomate.com/files/assets/5bc5ed6f-26e6-4c3a-8d03-1b169dc7f983",
+    "Tagline.text": "Enter your tagline here",
+    "Title.text": "Lorem ipsum dolor sit amet",
+    "Start-Text.text": "A second and longer text here ✌️",
+    "Slide-1-Image.source": "https://creatomate.com/files/assets/63dfc7e7-8621-4779-b471-e4098783eaa2",
+    "Slide-1-Text.text": "Enter a text for the first slide. ⛱️",
+    "Slide-2-Image.source": "https://creatomate.com/files/assets/5e62bfc9-060a-4a27-aba0-aecdc49215b7",
+    "Slide-2-Text.text": "Enter a text for the second slide. 🌊",
+    "Slide-3-Image.source": "https://creatomate.com/files/assets/0ae5625b-8c8d-498c-9f35-fb50797efbd1",
+    "Final-Text.text": "Your Call To Action Here"
+  }
+}
+
+headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {api_key}"
+}
+
+response = requests.post(url, json=data, headers=headers)
+print(response.text)
