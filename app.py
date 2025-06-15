@@ -18,7 +18,7 @@ Retorne a resposta em JSON com os seguintes campos:
 
 {
   "roteiro": "<roteiro textual da narração>",
-  "prompt_imagem": "<prompt detalhado para gerar uma imagem que represente o vídeo>"
+  "prompt_imagem": "<prompt detalhado para gerar uma imagem que represente o vídeo com máximo de 70 tokens>"
 }
 """
 
@@ -29,9 +29,9 @@ prompt_imagem = resultado["prompt_imagem"]
 print(f"\n📜 Narração:\n{narracao}\n")
 print(f"🖼️  Prompt da imagem:\n{prompt_imagem}\n")
 
-url_imagem = gerar_imagem_huggingface(prompt_imagem)
-print(f"🖼️  Imagem gerada: {url_imagem}\n")
+folha_imagem = gerar_imagem_huggingface(prompt_imagem)
+print(f"🖼️  Imagem gerada: {folha_imagem}\n")
 
-movie_id = criar_video_json2video(narracao, url_imagem)
-url_final = monitorar_video(movie_id)
-baixar_video(url_final)
+# movie_id = criar_video_json2video(narracao, url_imagem)
+# url_final = monitorar_video(movie_id)
+# baixar_video(url_final)
