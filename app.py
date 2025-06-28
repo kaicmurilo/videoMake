@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import re
 from datetime import datetime
 from functions.roteiro import gerar_roteiro_e_prompt
-from functions.image import gerar_imagem_huggingface
+from functions.image import gerar_imagem_local
 from functions.video import criar_video_json2video, monitorar_video, baixar_video
 load_dotenv()
 
@@ -36,11 +36,11 @@ with open(nome_arquivo, "w", encoding="utf-8") as f:
     json.dump(resultado, f, ensure_ascii=False)
 
 
-# print(f"\n📜 Narração:\n{narracao}\n")
-# print(f"🖼️  Prompt da imagem:\n{prompt_imagem}\n")
+print(f"\n📜 Narração:\n{narracao}\n")
+print(f"🖼️  Prompt da imagem:\n{prompt_imagem}\n")
 
-# folha_imagem = gerar_imagem_huggingface(prompt_imagem)
-# print(f"🖼️  Imagem gerada: {folha_imagem}\n")
+folha_imagem = gerar_imagem_local(prompt_imagem)
+print(f"🖼️  Imagem gerada: {folha_imagem}\n")
 
 # movie_id = criar_video_json2video(narracao, url_imagem)
 # url_final = monitorar_video(movie_id)
