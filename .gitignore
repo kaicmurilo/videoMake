@@ -7,4 +7,6 @@
 *.gif
 *.bmp
 *.tiff
-*.json
+*.jsom
+videos/
+thumbnails/
