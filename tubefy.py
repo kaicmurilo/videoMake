@@ -15,6 +15,7 @@ OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/v1/completions")
 TAGS_TK = os.getenv("TAGS_TK")
 PROMPT_OLLAMA = os.getenv("PROMPT_OLLAMA")
 TUBFY_PROMPT = os.getenv("TUBFY_PROMPT")
+CLIENT_SECRETS_FILE = "client_secrets.json"
 
 if not USER_DATA_DIR:
     print("⚠️ Defina CHROME_USER_DATA_DIR no .env")

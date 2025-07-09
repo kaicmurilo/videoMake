@@ -10,3 +10,4 @@
 *.jsom
 videos/
 thumbnails/
+*.json
