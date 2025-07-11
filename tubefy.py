@@ -126,7 +126,6 @@ def generate_short(title: str, assunto: str) -> tuple[Path, Path]:
         # aguardar preview e baixar vídeo
         print("➡️ Aguardando Preview...")
         page.locator('button:has-text("Baixar Vídeo")').click()
-        page.locator('video#preview').wait_for(state='attached', timeout=600000)
         print("➡️ Baixando Vídeo...")
         #entra na pasta e renomeia o arquivo baixado para f"{title}.mp4" base_dir
         time.sleep(10)
