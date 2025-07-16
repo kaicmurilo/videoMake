@@ -8,7 +8,7 @@ import json
 import re
 import ast
 import time
-
+import random
 load_dotenv()
 USER_DATA_DIR = os.getenv("CHROME_USER_DATA_DIR")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/v1/completions")
@@ -16,6 +16,9 @@ TAGS_TK = os.getenv("TAGS_TK")
 PROMPT_OLLAMA = os.getenv("PROMPT_OLLAMA")
 TUBFY_PROMPT = os.getenv("TUBFY_PROMPT")
 CLIENT_SECRETS_FILE = "client_secrets.json"
+
+
+tema = ['Estoicismo', 'Bíblico']
 
 if not USER_DATA_DIR:
     print("⚠️ Defina CHROME_USER_DATA_DIR no .env")
@@ -41,7 +44,7 @@ def download_file(url: str, path: Path):
     resp.raise_for_status()
     path.write_bytes(resp.content)
 
-def generate_short(title: str, assunto: str) -> tuple[Path, Path]:
+def generate_short(title: str, assunto: str, tema: str) -> tuple[Path, Path]:
     base_dir = Path("videos") / title
     base_dir.mkdir(parents=True, exist_ok=True)
 
@@ -66,7 +69,7 @@ def generate_short(title: str, assunto: str) -> tuple[Path, Path]:
         page.click('button:has-text("Novo Projeto")')
         page.fill('div:has-text("Título") input', title)
         print("➡️ Selecionando assunto...")
-        page.select_option('select.bubble-element.Dropdown', label="Estoicismo")
+        page.select_option('select.bubble-element.Dropdown', label=tema)
         print("➡️ Digitando prompt...")
         page.fill('div:has-text("Prompt para ideia do vídeo") textarea', assunto)
         print("➡️ Avançando...")
@@ -184,9 +187,10 @@ def get_json_response(script: str) -> dict:
             return {}
     
 if __name__ == "__main__":
-    script = call_ollama("llama3", PROMPT_OLLAMA)
+    number_random = random.randint(0, len(tema) - 1)
+    script = call_ollama("llama3", PROMPT_OLLAMA.replace("[TEMA]", tema[number_random]))
     data = get_json_response(script)
     title = data["title"] or data["titulo"]
     assunto = data["assunto"]
     assunto = TUBFY_PROMPT.replace("[ASSUNTO]", assunto)
-    generate_short(title, assunto)
+    generate_short(title, assunto, tema[number_random])

@@ -11,17 +11,8 @@ SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
 
 class YT:
-    def __init__(self, client_secrets_file: str):
-        self.parser = argparse.ArgumentParser()
-        self.parser.add_argument("--file", required=True)
-        self.parser.add_argument("--title", required=True)
-        self.parser.add_argument("--description", default="")
-        self.parser.add_argument("--tags", nargs="*", default=[])
-        self.parser.add_argument("--category", default="22")
-        self.parser.add_argument("--privacy", choices=["public","private","unlisted"], default="private")
-        self.args = self.parser.parse_args()
-        self.client_secrets_file = client_secrets_file
-        self.youtube = self.get_service()
+    def __init__(self, youtube):
+        self.youtube = youtube
 
     def get_service(self):
         flow = InstalledAppFlow.from_client_secrets_file(self.client_secrets_file, SCOPES)
@@ -48,6 +39,15 @@ class YT:
         return response
 
 
+    def list_video_categories(self, region_code='BR'):
+        request = self.youtube.videoCategories().list(
+            part='snippet',
+            regionCode=region_code
+        )
+        response = request.execute()
+        return {item['snippet']['title']: item['id'] for item in response.get('items', [])}
+    
+    
     # resp = upload_video(
     #     youtube,
     #     args.file,

@@ -1,44 +1,55 @@
-from huggingface_hub import InferenceClient
-from diffusers import StableDiffusionPipeline
-from PIL import Image
-import vertexai
-from vertexai.preview.vision_models import ImageGenerationModel, ImageGenerationResponse
-import torch
 import os
+import googleapiclient.discovery
+import googleapiclient.errors
+import googleapiclient.http
+import google_auth_oauthlib.flow
 
-MODELOS = [
-    "runwayml/stable-diffusion-v1-5",
-    "stabilityai/stable-diffusion-2",
-    "dreamlike-art/dreamlike-photoreal-2.0",
-    "nitrosocke/redshift-diffusion",
-    "prompthero/openjourney"
-]
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
-PROJECT_ID = os.getenv("GOOGLEPROJECT") 
-LOCATION = "us-central1"
-OUTPUT_FILE = "imagem_gerada_google.png"
+def authenticate_youtube():
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    client_secrets_file = "client_secrets.json"
 
-CAMINHO_IMAGEM = "saida.png"
+    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
+        client_secrets_file,
+        SCOPES
+    )
+    credentials = flow.run_local_server()
+    youtube = googleapiclient.discovery.build("youtube", "v3", credentials=credentials)
+    return youtube
 
+def upload_video(youtube):
+    request_body = {
+        "snippet": {
+            "categoryId": "22",
+            "title": "Quantas Vezes você já se sabotou hoje?",
+            "description": "",
+            "tags": ["auto"]
+        },
+        "status": {
+            "privacyStatus": "private"
+        }
+    }
 
-def gerar_imagem_local(prompt: str) -> str:
-    print("⚙️ Gerando imagem localmente com diffusers...")
+    media_file = googleapiclient.http.MediaFileUpload(
+        'video.mp4',
+        chunksize=-1,
+        resumable=True
+    )
+    request = youtube.videos().insert(
+        part="snippet,status",
+        body=request_body,
+        media_body=media_file
+    )
 
-    pipe = StableDiffusionPipeline.from_pretrained(
-        "runwayml/stable-diffusion-v1-5",
-        torch_dtype=torch.float16,
-        use_auth_token=True  # requer login via huggingface-cli login
-    ).to("cuda")
+    response = None
+    while response is None:
+        status, response = request.next_chunk()
+        if status:
+            print(f"Uploading: {int(status.progress() * 100)}%")
 
-    pipe.enable_attention_slicing()
-    pipe.enable_model_cpu_offload()  # otimiza uso em placas com baixa VRAM
+    print(f'Video ID: {response["id"]}')
 
-    imagem = pipe(prompt, num_inference_steps=20).images[0]
-    imagem.save(CAMINHO_IMAGEM)
-    print("✅ Imagem gerada localmente.")
-    return CAMINHO_IMAGEM
-
-# --- BLOCO DE EXECUÇÃO ---
 if __name__ == "__main__":
-    meu_prompt = "Um astronauta surfando em uma onda cósmica de nebulosas, ultra realista, arte digital"
-    gerar_imagem_local(meu_prompt)
+    youtube = authenticate_youtube()
+    upload_video(youtube)
