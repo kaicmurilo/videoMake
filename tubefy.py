@@ -18,7 +18,7 @@ TUBFY_PROMPT = os.getenv("TUBFY_PROMPT")
 CLIENT_SECRETS_FILE = "client_secrets.json"
 
 
-tema = ['Estoicismo', 'Bíblico']
+tema = ['Estoicismo', 'Bíblico', 'Budismo', 'Motivacional', 'Relacionamento']
 
 if not USER_DATA_DIR:
     print("⚠️ Defina CHROME_USER_DATA_DIR no .env")
